@@ -31,7 +31,8 @@
 		"nodejs_compat"
 	],
 	"vars": {
-		"DISCORD_APPLICATION_ID": ""
+		"DISCORD_APPLICATION_ID": "1511586869362561205",
+		"DISCORD_PUBLIC_KEY": "99813bf093616aa8ef97d144312eef8834c34fb9848a9e48095ea5e4ecf63bf5"
 	}
 	/**
 	 * Smart Placement

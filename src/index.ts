@@ -13,9 +13,9 @@ export class PixelCanvas extends DurableObject<Env> {
 		?? Array(SIZE).fill(null).map(() => Array(SIZE).fill(null));
 	}
 
-	async getCanvas() {
+	async getCanvas(): Promise<(string | null)[][]> {
 		await this.init();
-		return this.pixels;
+		return this.pixels!;
 	}
 
 	async setPixel(x: number, y: number, color: string) {
@@ -30,7 +30,7 @@ export class PixelCanvas extends DurableObject<Env> {
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		const url = new URL(request.url);
-		const stub = env.PIXEL_CANVAS.getByName("main");
+		const stub = env.PIXEL_CANVAS.getByName("main") as unknown as PixelCanvas;
 
 		// Discord interactions endpoint
 		if (url.pathname === "/discord" && request.method === "POST") {
@@ -45,8 +45,8 @@ export default {
 		}
 
 		if (url.pathname === "/pixel" && request.method === "PUT") {
-			const { x, y, color } = await request.json();
-			const ok = await stub.setPixel(x, y, color);
+			const body = await request.json() as { x: number; y: number; color: string };
+			const ok = await stub.setPixel(body.x, body.y, body.color);
 			return ok ? new Response("ok") : new Response("invalid", { status: 400 });
 		}
 
