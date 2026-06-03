@@ -1,5 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import { handleDiscordInteraction } from "./discord";
+import { encodeCanvas } from "./png";
 
 const SIZE = 64;
 
@@ -42,6 +43,17 @@ export default {
 
 		if (url.pathname === "/canvas" && request.method === "GET") {
 			return Response.json(await stub.getCanvas());
+		}
+
+		if (url.pathname === "/canvas.png" && request.method === "GET") {
+			const pixels = await stub.getCanvas();
+			const png = await encodeCanvas(pixels);
+			return new Response(png, {
+				headers: {
+					"Content-Type": "image/png",
+					"Cache-Control": "no-cache",
+				},
+			});
 		}
 
 		if (url.pathname === "/pixel" && request.method === "PUT") {
